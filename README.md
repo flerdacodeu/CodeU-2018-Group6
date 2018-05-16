@@ -10,3 +10,5 @@ directories.
 Remember to create a branch named `<username>-<assingment#>` instead
 of submitting to the `master` branch and make a pull request to
 `master` when you are ready to submit.
+
+Welcome to CodeU, have a great time!
