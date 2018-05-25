@@ -83,7 +83,7 @@ public class Q2<T>{
 	// Compute the size of the list
 	// Calculate how many elements to traverse from left to the kth elem required.
 	// Give as argument the list (with Node objects) and the query k.
-	public static <T> T getElem(int k, SimpleLinkedList<T> list){
+	public static <T> T getKthFromLastElem(int k, SimpleLinkedList<T> list){
 		// Check if list is empty or if k is negative.
 		if(list.isEmpty() || k < 0){
 			System.out.println("Invalid query");
@@ -122,7 +122,7 @@ public class Q2<T>{
 			list.addElement(nodeData);
 		}
 
-		String result = getElem(k, list);
+		String result = getKthFromLastElem(k, list);
 		
 		if(result == null){
 			System.out.println("Result: null");

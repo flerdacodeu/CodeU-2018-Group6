@@ -16,53 +16,43 @@ public class Q1 {
 		if(word1.length() != word2.length()){
 			return false;
 		}
-		else{
-			//Map the frequencies of each character in word1, save in map_word1.
-			HashMap<Character, Integer> map_word1 = new HashMap<Character, Integer>();
-			int size_word1 = word1.length();
-			int size_word2 = word2.length();
-			
-			for(int i = 0; i < size_word1; i++){
-				char letter = word1.charAt(i);
-				//If the letter exists in map, update it.
-				if(map_word1.containsKey(letter)){
-					int freq = map_word1.get(letter);
-					freq++;
-					map_word1.replace(letter, freq);
-				}
-				//If the letter does not exist in map, put it.
-				else{ 
-					map_word1.put(letter, 1);
-				}
+		//Map the frequencies of each character in word1, save in map_word1.
+		HashMap<Character, Integer> map_word1 = new HashMap<Character, Integer>();
+		int size_word1 = word1.length();
+		int size_word2 = word2.length();
+		
+		for(int i = 0; i < size_word1; i++){
+			char letter = word1.charAt(i);
+			//If the letter exists in map, update it.
+			if(map_word1.containsKey(letter)){
+				int freq = map_word1.get(letter);
+				freq++;
+				map_word1.replace(letter, freq);
 			}
-			
-			// Check every letter in word2 has the same frequency in word1 by using map_word1.
-			for(int i = 0; i < size_word2; i++){
-				char letter = word2.charAt(i);
-				if(map_word1.containsKey(letter)){
-					int freq = map_word1.get(letter);
-					// A letter in word2 appears more times than in word1
-					if(freq <= 0){
-						return false;
-					}
-					freq--;
-					map_word1.replace(letter, freq);
-				}
-				// Letter in word2 does not appear in word1
-				else{
-					return false;
-				}
+			else{ //If the letter does not exist in map, put it.
+				map_word1.put(letter, 1);
 			}
-			
-			// Check there is no letter in word1 that appears more times than in word2 
-			for(Character letter: map_word1.keySet()){
-				if(map_word1.get(letter) > 0){
-					return false;
-				}
-			}
-			
-			return true;
 		}
+		
+		// Check every letter in word2 has the same frequency in word1 by using map_word1.
+		for(int i = 0; i < size_word2; i++){
+			char letter = word2.charAt(i);
+			if(map_word1.containsKey(letter)){
+				int freq = map_word1.get(letter);
+				// A letter in word2 appears more times than in word1
+				if(freq <= 0){
+					return false;
+				}
+				freq--;
+				map_word1.replace(letter, freq);
+			}
+			else{ // Letter in word2 does not appear in word1
+				return false;
+			}
+		}
+		
+		return true;
+		
 	}
 	
 	private static boolean areSentencesAnagrams(String sent1, String sent2){
@@ -105,12 +95,6 @@ public class Q1 {
 			}
 			// No anagram found in sent1 for word2
 			if(!found)
-				return false;
-		}
-		
-		// Check there is no word left in sent1 that was not an anagram of any word in sent2
-		for(String word: map_sent1.keySet()){
-			if(map_sent1.get(word) > 0)
 				return false;
 		}
 		
