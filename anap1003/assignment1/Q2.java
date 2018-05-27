@@ -1,20 +1,21 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package assignment1;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- *
- * @author Ana
+ * Class Q2 has one public method 'findKthLastElem', one private method 'outcomeOfFindingKthLastElem'
+ * and a main method used for testing.
+ * 
+ * Method int findKthLastElem(int, LinkedList<Integer>) takes a number, k, 
+ * and a LinkedList object and returns the kth to last element of the list, by
+ * using two iterators which are k steps apart.
+ * Method String outcomeOfFindingKthLastElem(int, LinkedList<Integer>) is used
+ * for testing purposes.
  */
 public class Q2 {
 
-    private static int q2(int k, LinkedList list) {
+    public static int findKthLastElem(int k, LinkedList list) {
 
         int retValue = Integer.MIN_VALUE;
 
@@ -25,22 +26,39 @@ public class Q2 {
         if (k + 1 > list.size()) {
             return retValue;
         }
-        
+
         // two 'pointers', one that is k steps ahead and reaches the end of the list first
         // leaving the second pointer at exactly k steps before the last element  
         Iterator itrKstepsAhead = list.iterator();
         Iterator itr = list.iterator();
 
-        for (int i = 0; i < k; i++) {
+        for (int i = 0; i < k && itrKstepsAhead.hasNext(); i++) {
             itrKstepsAhead.next();
         }
-        
-        do {            
+
+        if (!itrKstepsAhead.hasNext()) {
+            return retValue; // k is bigger that the list size, retValue is still Integer.MIN_VALUE
+        }
+
+        do {
             retValue = (int) itr.next();
             itrKstepsAhead.next();
         } while (itrKstepsAhead.hasNext());
 
         return retValue;
+    }
+
+    private static String outcomeOfFindingKthLastElem(int k, LinkedList list) {
+        String outcomeMessage;
+        
+        int kthElem = findKthLastElem(k, list);
+        if (kthElem != Integer.MIN_VALUE) {
+            outcomeMessage = "The " + k + ". to last element is: " + kthElem;
+        } else {
+            outcomeMessage = "The value of k is not valid!";
+        }
+        
+        return outcomeMessage;
     }
 
     /**
@@ -54,14 +72,38 @@ public class Q2 {
             for (int i = 1; i < args.length; i++) {
                 list.add(Integer.parseInt(args[i]));
             }
-            int kthElem = q2(k, list);
-            if (kthElem != Integer.MIN_VALUE) {
-                System.out.println("The " + k + ". element is: " + kthElem);
-            } else {
-                System.out.println("The value of k is not valid!");
-            }
+            
+            System.out.println(outcomeOfFindingKthLastElem(k, list));
+            
         } else {
-            System.out.println("Please provide a number k, followed by a sequence of numbers as program inputs.");
+            System.out.println("To find your own kth last element, please provide a number k, followed by a sequence of numbers as program inputs.");
+
+            System.out.println("\n-----------------------------------------------------Testing-----------------------------------------------------\n");
+
+            System.out.print(" == Testing list content: [ ");
+            LinkedList<Integer> testingList = new LinkedList();
+            for (int i = 0; i < 10; i++) {
+                testingList.add(i);
+                System.out.print(i + (i < 9 ? "," : "") + " ");
+            }
+            System.out.println("]\n");
+
+            System.out.print(" --> Invalid input; k is negative: ");
+            System.out.println(outcomeOfFindingKthLastElem(-1, testingList));
+            
+            System.out.print(" --> Invalid input; k is bigger that the list size: ");
+            System.out.println(outcomeOfFindingKthLastElem(10, testingList));
+            
+            System.out.print(" --> Valid input; edgecase; kth elem is the last one: ");
+            System.out.println(outcomeOfFindingKthLastElem(0, testingList));
+            
+            System.out.print(" --> Valid input; edgecase; kth elem is the first one: ");
+            System.out.println(outcomeOfFindingKthLastElem(9, testingList));
+            
+            System.out.print(" --> Valid input; kth elem is in the middle of the list: ");
+            System.out.println(outcomeOfFindingKthLastElem(5, testingList));
+            
+            System.out.println("\n-----------------------------------------------------------------------------------------------------------------");
         }
 
     }

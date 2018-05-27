@@ -1,51 +1,66 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package assignment1;
 
 import java.util.*;
 
 /**
- *
- * @author Ana
+ * Class Q1 has one public method 'areAnagrams', one private method 'outcomeOfAreAnagramsCheck'
+ * and a main method used for testing.
+ * 
+ * Method boolean areAnagrams(String, String) takes two strings and checks whether
+ * they are anagrams of one another. The check is case-insensitive and in case of 
+ * inputs that are sentences, requires each word of the second sentence to be an
+ * anagram of one of the words in the first sentence (and vice-versa).
+ * Method String outcomeOfAreAnagramsCheck(String, String) is used for testing purposes.
+ * 
+ * The solution used for determining if one string is an anagram of the other is as follows:
+ * 1) clean the inputs of all non-alphanumerical characters
+ * 2) split each input by the space character to get an array of words
+ * 3) sort each word in both arrays alphabetically and the sort the whole array
+ * 4) check for a mismatch in the arrays, if none are found, the inputs are anagrams!
+ * 
+ * Another possible solution would be to keep track of the number of characters
+ * in each word using a HashMap<Character, Integer>, but since for the follow-up
+ * we have to make sure that each word of the sentence is the anagram of one of
+ * the words in the resulting string, rather than have the whole sentences be ana-
+ * grams of each other, I would have to keep a separate HashMap for each word of
+ * the 'original' sentence, I felt like the above solution is cleaner and easier
+ * to understand.
  */
 public class Q1 {
 
     // returns true if the inputs are anagrams
-    private static boolean q1(String o, String r) {
-        String[] original, result;
+    public static boolean areAnagrams(String firstSentence, String secondSentence) {
+        String[] firstSentenceWords, secondSentenceWords;
 
         // get rid of non-alphanumerical characters
-        o = o.replaceAll("[^A-Za-z0-9 ]", "");
-        r = r.replaceAll("[^A-Za-z0-9 ]", "");
+        firstSentence = firstSentence.replaceAll("[^A-Za-z0-9 ]", "");
+        secondSentence = secondSentence.replaceAll("[^A-Za-z0-9 ]", "");
 
         // split input by space to get an array of strings
-        original = o.toLowerCase().split(" ");
-        result = r.toLowerCase().split(" ");
+        firstSentenceWords = firstSentence.toLowerCase().split(" ");
+        secondSentenceWords = secondSentence.toLowerCase().split(" ");
 
-        // check if the two arrays are the same lenght -> can't be anagrams if they're not!
-        if (original.length != result.length) {
+        // check if the two arrays have the same num of words -> can't be anagrams if they don't!
+        if (firstSentenceWords.length != secondSentenceWords.length) {
             return false;
         }
-        // sort each string of the two arrays alphabetically
-        for (int i = 0; i < original.length; i++) {
-            char[] charArray = original[i].toCharArray();
+        // sort each string(word) of the two arrays alphabetically
+        for (int i = 0; i < firstSentenceWords.length; i++) {
+            char[] charArray = firstSentenceWords[i].toCharArray();
             Arrays.sort(charArray);
-            original[i] = new String(charArray);
-            charArray = result[i].toCharArray();
+            firstSentenceWords[i] = new String(charArray);
+            charArray = secondSentenceWords[i].toCharArray();
             Arrays.sort(charArray);
-            result[i] = new String(charArray);
+            secondSentenceWords[i] = new String(charArray);
         }
 
-        // sort the whole array of strings alphabetically
-        Arrays.sort(original);
-        Arrays.sort(result);
+        // sort the whole array of words alphabetically
+        Arrays.sort(firstSentenceWords);
+        Arrays.sort(secondSentenceWords);
 
         // go through the both arrays to see if there is a mismatch
-        for (int i = 0; i < original.length; i++) {
-            if (original[i].compareTo(result[i]) != 0) {
+        for (int i = 0; i < firstSentenceWords.length; i++) {
+            if (firstSentenceWords[i].compareTo(secondSentenceWords[i]) != 0) {
                 return false;
             }
         }
@@ -53,16 +68,11 @@ public class Q1 {
         return true;
 
     }
-
-    /*
-        Another possible solution would be to keep track of the number of characters
-        in each word using a HashMap<Character, Integer>, but since for the follow-up
-        we have to make sure that each word of the sentence is the anagram of one of
-        the words in the resulting string, rather than have the whole sentences be ana-
-        grams of each other, I would have to keep a separate HashMap for each word of
-        the 'original' sentence, I felt like the above solution is cleaner and easier
-        to understand.
-     */
+    
+    private static String outcomeOfAreAnagramsCheck(String firstSentence, String secondSentence) {
+        return "Inputs: '" + firstSentence + "' and '" + secondSentence + "' are "
+                    + (areAnagrams(firstSentence, secondSentence) ? "anagrams! :)" : "not anagrams! :(");
+    }
 
     /**
      * @param args the command line arguments
@@ -70,11 +80,31 @@ public class Q1 {
     public static void main(String[] args) {
         
         if (args.length == 2) {
-            String message = "Inputs: '" + args[0] + "' and '" + args[1] + "' are "
-                    + (q1(args[0], args[1]) ? "anagrams! :)" : "not anagrams! :(");
-            System.out.println(message);
+            System.out.println(outcomeOfAreAnagramsCheck(args[0], args[1]));
         } else {
-            System.out.println("Please provide two strings as program inputs.");
+            System.out.println("To choose by yourself the strings to be tested, please provide two strings as program inputs.");
+            
+            System.out.println("\n--------------------------------------------Testing--------------------------------------------\n");
+
+            System.out.print(" --> Valid input; two words that are anagrams: ");
+            System.out.println(outcomeOfAreAnagramsCheck("listen", "silent"));
+            
+            System.out.print(" --> Valid input; two words that are anagrams: ");
+            System.out.println(outcomeOfAreAnagramsCheck("silent", "listen"));
+            
+            System.out.print(" --> Valid input; two sentences that are anagrams: ");
+            System.out.println(outcomeOfAreAnagramsCheck("Good Morning, Googlers!", "ornmngi ooggersl doog"));
+            
+            System.out.print(" --> Valid input; two sentences where each word isn't an anagram of the other: ");
+            System.out.println(outcomeOfAreAnagramsCheck("Tom Marvolo Riddle", "I am Lord Voldemort"));
+            
+            System.out.print(" --> One valid input, one empty input: ");
+            System.out.println(outcomeOfAreAnagramsCheck("Ana", ""));
+            
+            System.out.print(" --> Empty input: ");
+            System.out.println(outcomeOfAreAnagramsCheck("", ""));
+            
+            System.out.println("\n-----------------------------------------------------------------------------------------------------------------");
         }
 
     }
