@@ -1,3 +1,5 @@
+package Assignment1;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -72,12 +74,12 @@ public class Question2 {
         LinkedList<Integer> list = new LinkedList<>();
         list.addAll(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
 
-        assertTrue(getKthToLastElement(list, 0) == 10);
-        assertTrue(getKthToLastElement(list, 1) == 9);
-        assertTrue(getKthToLastElement(list, 4) == 6);
-        assertTrue(getKthToLastElement(list, list.size() - 1) == 1);
-        assertTrue(getKthToLastElement(list, list.size()) == null);
-        assertTrue(getKthToLastElement(list, 20) == null);
+        assertTrue(getKthToLastElement(list, 0) == 10); //last element
+        assertTrue(getKthToLastElement(list, 1) == 9); //penultimate element
+        assertTrue(getKthToLastElement(list, 4) == 6); //middle element
+        assertTrue(getKthToLastElement(list, list.size() - 1) == 1); //first element
+        assertTrue(getKthToLastElement(list, list.size()) == null); //k equal to list size
+        assertTrue(getKthToLastElement(list, 20) == null); //k larger than list size
 
         assertTrue(getKthToLastElementKnownSize(list, 0) == 10);
         assertTrue(getKthToLastElementKnownSize(list, 1) == 9);
