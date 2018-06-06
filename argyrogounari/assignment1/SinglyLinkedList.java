@@ -1,4 +1,10 @@
-
+/**
+* Class representing a Singly Linked List.
+*
+* @author  Argyro Gounari
+* @version 1.1
+* @since   15-05-2018 
+*/
 public class SinglyLinkedList<T> {
 
 	private Node<T> head;
