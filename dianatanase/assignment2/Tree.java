@@ -124,7 +124,7 @@ public class Tree<T>{
 		}
 	}
 	
-	// Update Left of Right children of a key.
+	// Update Left or Right child of a key (change it if it already exists).
 	void updateLeftChildOfKey(int key_child, int key_parent, T data) throws Exception{
 		Node<T> parent_node = root.findKeyInChildren(key_parent);
 		if(parent_node != null){
