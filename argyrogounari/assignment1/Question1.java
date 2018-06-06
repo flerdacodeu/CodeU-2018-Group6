@@ -1,6 +1,14 @@
 import java.util.Scanner;
 import java.util.*;
-
+/**
+* Question 1: Given two strings, determine if one is an anagram of the other. 
+* Two words are anagrams of each other if they are made of the same
+* letters in a different order.
+*
+* @author  Argyro Gounari
+* @version 1.1
+* @since   15-05-2018 
+*/
 public class Question1 {
 
 	public static void main(String[] args) {
@@ -12,7 +20,7 @@ public class Question1 {
 		
 		reader.close(); 
 		
-		if (anagram(sentence1,sentence2)) {
+		if (isAnagram(sentence1,sentence2)) {
 			System.out.printf("'%s' and '%s' are anagrams",sentence1, sentence2);
 		} else {
 			System.out.printf("'%s' and '%s' are NOT anagrams",sentence1, sentence2);
@@ -20,22 +28,29 @@ public class Question1 {
 
 	}
 	
-	public static boolean anagram(String sentence1, String sentence2){
+	public static boolean isAnagram(String sentence1, String sentence2){
 		
-		ArrayList<String> sentence1Words = new ArrayList<String>(Arrays.asList(sentence1.split(" ")));
-		ArrayList<String> sentence2Words = new ArrayList<String>(Arrays.asList(sentence2.split(" ")));
-		
+		ArrayList<String> sentence1Words = new ArrayList<String>(Arrays.asList(sentence1.split("[\\p{Punct}\\s]+")));
+		ArrayList<String> sentence2Words = new ArrayList<String>(Arrays.asList(sentence2.split("[\\p{Punct}\\s]+")));
+		System.out.println(sentence1Words);
+		System.out.println(sentence2Words);
 		int anagram = 0;
-        for (int i = 0; i < sentence1Words.size(); i++){
+		int sentense1Size = sentence1Words.size();
+		
+		for (int i = 0; i < sentence1Words.size(); i++){
         	for (int j = 0; j < sentence2Words.size(); j++){
-        		if (anagramWord(sentence1Words.get(i), sentence2Words.get(j))) {
+        		if (anagramWord(sentence1Words.get(i).trim(), sentence2Words.get(j).trim()) && !(sentence1Words.size()==0)) {
         			sentence2Words.remove(j);
+        			sentence2Words.remove(i);
         			anagram ++;
         		}
         	}
         }
-        
-        if (anagram == sentence1Words.size()){
+		
+        //foo bar
+        //oof ofo
+		//rab oof baz
+        if (anagram == sentense1Size){
         	return true;
         }
         
@@ -49,7 +64,7 @@ public class Question1 {
 		word2 = word2.toLowerCase();
 		
 		if (word1.equals(word2)) {
-			return false;
+			return true;
 		}
 		
 		if (word1.length() == word2.length()) {
@@ -69,6 +84,7 @@ public class Question1 {
 	        		if (word1Letters.get(i) == word2Letters.get(j)) {
 	        			word2Letters.remove(j);
 	        			same ++;
+	        			continue;
 	        		}
 	        	}
 	        }
