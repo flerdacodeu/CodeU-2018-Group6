@@ -1,4 +1,10 @@
-
+/**
+* Class representing a Node.
+*
+* @author  Argyro Gounari
+* @version 1.1
+* @since   15-05-2018 
+*/
 public class Node <T>{
 
 	private T data;
