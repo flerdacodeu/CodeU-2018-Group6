@@ -53,14 +53,6 @@ public class Assignment2 {
         firstDepth = BinaryTree.getNodeDepth(firstNode);
         secondDepth = BinaryTree.getNodeDepth(secondNode);
         
-        if (firstDepth == 0) { // firstNode is the root, guaranteed to be the common ancestor
-            return firstNode;
-        }
-        
-        if (secondDepth == 0) { // secondNode is the root, guaranteed to be the common ancestor
-            return secondNode;
-        }
-        
         // firstNode deeper, traces back through tree to reach secondNode level
         while (firstDepth > secondDepth) {
             firstNode = firstNode.getParent();
@@ -73,12 +65,14 @@ public class Assignment2 {
             secondDepth--;
         }
         
-        while (!firstNode.getKey().equals(secondNode.getKey())) {
+        while (firstNode != null && secondNode != null && !firstNode.getKey().equals(secondNode.getKey())) {
             firstNode = firstNode.getParent();
             secondNode = secondNode.getParent();
         }
         
-        return firstNode;
+        // if one of the nodes is null, that means that that node isn't a part of the tree at all, so there is no common ancestor
+        // otherwise, both first and secondNode point to the same node, the lowest common ancestor
+        return (firstNode == null || secondNode == null) ? null : firstNode;
         
     }
     

@@ -20,20 +20,20 @@ public class BinaryTree<T> {
      * @param positionFromRoot
      * @return 
      */
-    public boolean addNode(T key, String positionFromRoot) {
+    public boolean addNode(T key, String positionFromRoot) throws Exception {
         if (positionFromRoot.isEmpty()) { // attempt to add root node 
             if (root == null) { //no root node in the tree
                 root = new TreeNode(key);
                 return true;
             }
-            return false; // root node already exists
+            throw new Exception("Root node already exists.");
         } else { // attempt to add leaves
             TreeNode tempNode = root;
 
             int i;
             for (i = 0; i < positionFromRoot.length() - 1; i++) {
                 if (tempNode == null) {
-                    return false;
+                    throw new Exception("String positionFromRoot points to a position that cannot be reached in the current layout of the tree.");
                 }
                 switch (positionFromRoot.charAt(i)) {
                     case 'L':
@@ -43,25 +43,25 @@ public class BinaryTree<T> {
                         tempNode = tempNode.getRightChild();
                         break;
                     default:
-                        return false;
+                        throw new Exception("String positionFromRoot has an invalid character.");
                 }
             }
 
             switch (positionFromRoot.charAt(i)) {
                 case 'L':
-                    if (tempNode.getLeftChild() != null) { // node already exists at the given position
-                        return false;
+                    if (tempNode.hasLeftChild()) { // node already exists at the given position
+                        throw new Exception("A node already exists at the position given by the string positionFromRoot.");
                     }
                     tempNode.setLeftChild(new TreeNode(key, tempNode));
                     break;
                 case 'R':
-                    if (tempNode.getRightChild() != null) { // node already exists at the given position
-                        return false;
+                    if (tempNode.hasRightChild()) { // node already exists at the given position
+                        throw new Exception("A node already exists at the position given by the string positionFromRoot.");
                     }
                     tempNode.setRightChild(new TreeNode(key, tempNode));
                     break;
                 default:
-                    return false;
+                    throw new Exception("String positionFromRoot has an invalid character.");
             }
         }
 
@@ -83,13 +83,14 @@ public class BinaryTree<T> {
             if (tempNode != null && tempNode.getKey().equals(key)) {
                 return tempNode;
             }
-            if (TreeNode.hasLeftChild(tempNode)) { // checks that node isn't null and has a left child
+            if (tempNode != null && tempNode.hasLeftChild()) { // checks that node isn't null and has a left child
                 queue.addLast(tempNode.getLeftChild());
             }
-            if (TreeNode.hasRightChild(tempNode)) { // checks that node isn't null and has right child
+            if (tempNode != null && tempNode.hasRightChild()) { // checks that node isn't null and has a right child
                 queue.addLast(tempNode.getRightChild());
             }
         }
+                
         return null;
     }
     

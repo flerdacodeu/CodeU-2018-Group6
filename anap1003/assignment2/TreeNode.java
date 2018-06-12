@@ -31,17 +31,19 @@ public class TreeNode<T> {
 
     public void setLeftChild(TreeNode leftChild) {
         this.leftChild = leftChild;
+        leftChild.parent = this;
     }
 
     public void setRightChild(TreeNode rightChild) {
         this.rightChild = rightChild;
+        rightChild.parent = this; // another solution to protecting the tree layout would be to change the access to protected
     }
 
-    public static boolean hasLeftChild(TreeNode node) {
-        return node != null && node.leftChild != null;
+    public boolean hasLeftChild() {
+        return this.leftChild != null;
     }
 
-    public static boolean hasRightChild(TreeNode node) {
-        return node != null && node.rightChild != null;
+    public boolean hasRightChild() {
+        return this.rightChild != null;
     }
 }

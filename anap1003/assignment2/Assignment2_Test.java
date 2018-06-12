@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 public class Assignment2_Test {
     
-    private BinaryTree buildTree() {
+    private BinaryTree buildTree() throws Exception {
         BinaryTree<Integer> tree = new BinaryTree<>();
 
         tree.addNode(7, "");
@@ -23,7 +23,7 @@ public class Assignment2_Test {
     }
     
     @Test
-    public void testAssignmentExampleQ1() {
+    public void testAssignmentExampleQ1() throws Exception {
         BinaryTree<Integer> testingTree = buildTree();
 
         List<Integer> ancestorsOf6 = Arrays.asList(2, 3, 7);
@@ -61,7 +61,7 @@ public class Assignment2_Test {
     }
     
     @Test
-    public void testAssignmentExampleQ2() {
+    public void testAssignmentExampleQ2() throws Exception {
         BinaryTree<Integer> testingTree = buildTree();
 
         Integer commonAncestor6_4 = 7;
@@ -73,8 +73,12 @@ public class Assignment2_Test {
         assertEquals(commonAncestor6_5, Assignment2.findCommonAncestor(testingTree.getNodeLvlOrder(6), testingTree.getNodeLvlOrder(5)).getKey());
         assertEquals(commonAncestor1_7, Assignment2.findCommonAncestor(testingTree.getNodeLvlOrder(1), testingTree.getNodeLvlOrder(7)).getKey());
         
-        // common ancestor of a node that doesn't exist in the tree and root
-        assertEquals(null, Assignment2.findCommonAncestor(testingTree.getNodeLvlOrder(0), testingTree.getNodeLvlOrder(7)));
+        // common ancestor of the root and a node that doesn't exist in the tree (given as a null value to the findCommonAncestormethod)
+        assertEquals(null, Assignment2.findCommonAncestor(testingTree.getNodeLvlOrder(7), testingTree.getNodeLvlOrder(0)));
+        
+        // common ancestor of a node that exists in the tree and a node that doesn't (but is given as a seemingly valid tree node)
+        assertEquals(null, Assignment2.findCommonAncestor(testingTree.getNodeLvlOrder(6), new TreeNode(9, new TreeNode(10, null))));
+
     }
 
 }
