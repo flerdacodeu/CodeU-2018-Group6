@@ -1,3 +1,8 @@
+package assignment2;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -17,11 +22,11 @@ public class Question2 {
      * @param nodeTwo
      * @return lowest common ancestor or one of the nodes if not both present
      */
-    private static MyNode findLowestCommonAncestorHelper(MyNode currentNode, MyNode nodeOne, MyNode nodeTwo) {
+    private static <T> MyNode<T> findLowestCommonAncestorHelper(MyNode<T> currentNode, T nodeOne, T nodeTwo) {
         if (currentNode == null) {
             return null;
         }
-        if (currentNode.equals(nodeOne)) {
+        if (currentNode.getData().equals(nodeOne)) {
             foundOne = true;
             // could stop search and return here, this is just to make sure both nodes are in the tree
             if (!foundTwo) {
@@ -30,7 +35,7 @@ public class Question2 {
             }
             return currentNode;
         }
-        if (currentNode.equals(nodeTwo)) {
+        if (currentNode.getData().equals(nodeTwo)) {
             foundTwo = true;
             // could stop search and return here, this is just to make sure both nodes are in the tree
             if (!foundOne) {
@@ -60,7 +65,7 @@ public class Question2 {
      * @param nodeTwo     second node
      * @return common ancestor of first and second node or null if one node is not present
      */
-    public static MyNode findLowestCommonAncestor(MyNode currentNode, MyNode nodeOne, MyNode nodeTwo) {
+    public static <T> MyNode<T> findLowestCommonAncestor(MyNode<T> currentNode, T nodeOne, T nodeTwo) {
         foundOne = false;
         foundTwo = false;
         MyNode result = findLowestCommonAncestorHelper(currentNode, nodeOne, nodeTwo);
@@ -99,10 +104,10 @@ public class Question2 {
         d.setLeft(g);
         d.setLeft(h);
 
-        assertTrue(findLowestCommonAncestor(a, d, f).equals(a)); // nodes on different branches
-        assertTrue(findLowestCommonAncestor(a, d, e).equals(b)); // nodes are "brothers", LCA is their parent
-        assertTrue(findLowestCommonAncestor(a, d, b).equals(b)); // one of the nodes is LCA
-        assertNull(findLowestCommonAncestor(a, b, new MyNode('w'))); // one node not in tree
-        assertNull(findLowestCommonAncestor(a, new MyNode('x'), new MyNode('w'))); // both nodes not in tree
+        assertTrue(findLowestCommonAncestor(a, 'd', 'f').equals(a)); // nodes on different branches
+        assertTrue(findLowestCommonAncestor(a, 'd', 'e').equals(b)); // nodes are "brothers", LCA is their parent
+        assertTrue(findLowestCommonAncestor(a, 'd', 'b').equals(b)); // one of the nodes is LCA
+        assertNull(findLowestCommonAncestor(a, 'b', 'w')); // one node not in tree
+        assertNull(findLowestCommonAncestor(a, 'x', 'w')); // both nodes not in tree
     }
 }

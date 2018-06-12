@@ -1,5 +1,7 @@
+package assignment2;
+
 /**
- * Class to represent a tree node. Has data and left and right children. Getters and setters in case we
+ * Represents a tree node. Has data and left and right children. Getters and setters in case we
  * need additional checks
  *
  * @param <T> type of data inside node
@@ -35,3 +37,4 @@ public class MyNode<T> {
         return data;
     }
 }
+
