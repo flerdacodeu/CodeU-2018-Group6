@@ -1,3 +1,5 @@
+package assignment2;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,20 +22,18 @@ public class Question1 {
      * @return
      */
 
-    private static <T> MyNode findAncestorsHelper(MyNode<T> node, MyNode<T> target, List<T> resultPath) {
+    private static <T> MyNode findAncestorsHelper(MyNode<T> node, T target, List<T> resultPath) {
         if (node == null) {
             return null;
         }
-        if (node.getData().equals(target.getData())) {
+        if (node.getData().equals(target)) {
             return node;
         }
-        MyNode leftSearch = findAncestorsHelper(node.getLeft(), target, resultPath);
-        if (leftSearch != null) {
+        if (findAncestorsHelper(node.getLeft(), target, resultPath) != null) {
             resultPath.add(node.getData());
             return node;
         }
-        MyNode rightSearch = findAncestorsHelper(node.getRight(), target, resultPath);
-        if (rightSearch != null) {
+        if (findAncestorsHelper(node.getRight(), target, resultPath) != null) {
             resultPath.add(node.getData());
             return node;
         }
@@ -46,7 +46,7 @@ public class Question1 {
      * @param <T>    data type of the nodes
      * @return list of ancestors of the target node, null if node not found
      */
-    public static <T> List<T> findAncestors(MyNode<T> root, MyNode<T> target) {
+    public static <T> List<T> findAncestors(MyNode<T> root, T target) {
         List<T> resultPath = new LinkedList<>();
         MyNode result = findAncestorsHelper(root, target, resultPath);
         if(result == null){
@@ -82,10 +82,10 @@ public class Question1 {
         d.setLeft(g);
         d.setLeft(h);
 
-        assertTrue(findAncestors(a, h).equals(Arrays.asList('d', 'b', 'a'))); // node is a leaf
-        assertTrue(findAncestors(a, d).equals(Arrays.asList('b', 'a'))); // node is non-leaf
-        assertTrue(findAncestors(a, a).equals(Arrays.asList())); // node is root, expect empty path
-        assertNull(findAncestors(a, new MyNode<>('w'))); // node not in tree, expect null
+        assertTrue(findAncestors(a, 'h').equals(Arrays.asList('d', 'b', 'a'))); // node is a leaf
+        assertTrue(findAncestors(a, 'd').equals(Arrays.asList('b', 'a'))); // node is non-leaf
+        assertTrue(findAncestors(a, 'a').equals(Arrays.asList())); // node is root, expect empty path
+        assertNull(findAncestors(a, 'w')); // node not in tree, expect null
 
     }
 }
