@@ -39,7 +39,8 @@ public class WordSearchTest {
                 {'A', 'A', 'R'},
                 {'T', 'C', 'D'}
         };
-        sampleDict.addWord("ATA");
+        sampleDict.addWord("ATA");  //letter A corresponds to different positions
+        sampleDict.addWord("ARA"); //same position is not used twice
         WordSearch wordSearch = new WordSearch(sampleDict, grid);
         Set<String> result = wordSearch.findWords();
         Set<String> expected = new HashSet<>(Arrays.asList("CAR", "CARD", "CAT", "ATA"));

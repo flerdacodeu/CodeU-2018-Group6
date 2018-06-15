@@ -33,11 +33,10 @@ public class WordSearch {
      */
     public Set<String> findWords() {
         Set<String> results = new HashSet<>();
+        boolean[][] visited = new boolean[rows][cols];
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                boolean[][] visited = new boolean[rows][cols];
-                visited[i][j] = true;
-                searchGrid(i, j, results, grid[i][j] + "", visited);
+                searchGrid(i, j, results, String.valueOf(grid[i][j]), visited);
             }
         }
         return results;
@@ -53,6 +52,7 @@ public class WordSearch {
      * @param vis     cells visited on current traversal
      */
     private void searchGrid(int i, int j, Set<String> results, String current, boolean[][] vis) {
+        vis[i][j] = true;
         if (dict.isWord(current)) {
             results.add(current);
         }
@@ -62,14 +62,13 @@ public class WordSearch {
                     if (isValidPosition(r, c) && !vis[r][c]) {
                         String newWord = current + grid[r][c];
                         if (dict.isPrefix(newWord)) {
-                            vis[r][c] = true;
                             searchGrid(r, c, results, newWord, vis);
-                            vis[r][c] = false;
                         }
                     }
                 }
             }
         }
+        vis[i][j]=false;
     }
 
     /**
