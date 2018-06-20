@@ -23,32 +23,30 @@ public class Dictionary {
         }
         
         TrieNode tempNode = root;
-        boolean dictionaryContainsPrefix = true;
         word = word.toUpperCase();
         
         for (int i = 0; i < word.length(); i++) {
-            if (dictionaryContainsPrefix && tempNode.hasChild(word.charAt(i))) {
+            if (tempNode.hasChild(word.charAt(i))) {
                 tempNode = tempNode.moveToChild(word.charAt(i));
             } else {
-                dictionaryContainsPrefix = false;
                 tempNode = tempNode.addChild(word.charAt(i), i == word.length() - 1);
             }
         }
         
     }
     
-    public boolean isWord(String word) throws Exception {
+    public boolean isWord(String word) {
         TrieNode tempNode = dictionaryContainsWord(word);
         return tempNode != null && tempNode.isCompleteWord();
     }
     
-    public boolean isPrefix(String prefix) throws Exception {
+    public boolean isPrefix(String prefix) {
         return dictionaryContainsWord(prefix) != null ;
     }
     
-    private TrieNode dictionaryContainsWord(String word) throws Exception {
+    private TrieNode dictionaryContainsWord(String word) {
         if (root == null) {
-            throw new Exception("Unitialized digital tree.");
+            throw new IllegalStateException("Unitialized digital tree.");
         }
         
         TrieNode tempNode = root;
