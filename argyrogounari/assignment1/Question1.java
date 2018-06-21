@@ -69,7 +69,7 @@ public class Question1 {
 		
 		if (word1.length() == word2.length()) {
 			
-			ArrayList<Character> word1Letters = new ArrayList<Character>();
+		ArrayList<Character> word1Letters = new ArrayList<Character>();
 	        for (int i = 0; i < word1.length(); i++){
 	        	word1Letters.add(word1.charAt(i));
 	        }
