@@ -31,12 +31,12 @@ public class TheMain {
 		
 		// Q1 - Print Ancestors
 		System.out.print("The ancestors of 5 are: ");
-		myTree.printAncestors(myTree.getRoot(),5);
+		myTree.printAncestors(5);
 		System.out.println();
 		
 		// Q2 - Common Ancestor
 		System.out.print("The lowest common ancestor is: ");
-		System.out.println(myTree.commonAncestor(myTree.getRoot(),myTree.getRoot().getRight().getLeft(), myTree.getRoot().getRight().getRight()).getKey());
+		System.out.println(myTree.commonAncestor( 5, 2));
 		
 	}
 }
