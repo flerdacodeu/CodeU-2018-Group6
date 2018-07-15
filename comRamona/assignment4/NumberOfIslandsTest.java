@@ -5,40 +5,43 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class NumberOfIslandsTest {
+    private static final Boolean F = false;
+    private static final Boolean T = true;
+
     @Test
     public void testNoIslands() {
         boolean[][] grid = new boolean[][]{
-                {false, false, false},
-                {false, false, false},
-                {false, false, false}
+                {F, F, F},
+                {F, F, F},
+                {F, F, F}
         };
         int expected = 0;
-        int actual = NumberOfIslands.countIsland(3, 3, grid);
+        int actual = NumberOfIslands.countIsland(grid);
         assertEquals(expected, actual);
     }
 
     @Test
     public void testEntireGridIsOneIsland() {
         boolean[][] grid = new boolean[][]{
-                {true, true, true},
-                {true, true, true},
-                {true, true, true}
+                {T, T, T},
+                {T, T, T},
+                {T, T, T}
         };
         int expected = 1;
-        int actual = NumberOfIslands.countIsland(3, 3, grid);
+        int actual = NumberOfIslands.countIsland(grid);
         assertEquals(expected, actual);
     }
 
     @Test
     public void testMultipleIslands() {
         boolean[][] grid = new boolean[][]{
-                {false, true, false, true},
-                {true, true, false, false},
-                {false, false, true, false},
-                {false, false, true, false}
+                {F, T, F, T},
+                {T, T, F, F},
+                {F, F, T, F},
+                {F, F, T, F}
         };
         int expected = 3;
-        int actual = NumberOfIslands.countIsland(4, 4, grid);
+        int actual = NumberOfIslands.countIsland(grid);
         assertEquals(expected, actual);
     }
 
@@ -46,13 +49,13 @@ public class NumberOfIslandsTest {
     public void testDiagonalTilesAreDifferentIslands() {
         //multiple one element islands on the diagonal
         boolean[][] grid = new boolean[][]{
-                {true, false, false, false},
-                {false, true, false, false},
-                {false, false, true, false},
-                {false, false, false, true}
+                {T, F, F, F},
+                {F, T, F, F},
+                {F, F, T, F},
+                {F, F, F, T}
         };
         int expected = 4;
-        int actual = NumberOfIslands.countIsland(4, 4, grid);
+        int actual = NumberOfIslands.countIsland(grid);
         assertEquals(expected, actual);
     }
 

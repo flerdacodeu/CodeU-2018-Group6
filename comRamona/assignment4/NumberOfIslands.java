@@ -12,12 +12,12 @@ public class NumberOfIslands {
     /**
      * Computes the number of islands in a grid of tiles
      *
-     * @param rows    number of rows
-     * @param columns number of columns
-     * @param grid    given grid of tiles
+     * @param grid given grid of tiles
      * @return number of islands
      */
-    public static int countIsland(int rows, int columns, boolean[][] grid) {
+    public static int countIsland(boolean[][] grid) {
+        int rows = grid.length;
+        int columns = grid[0].length;
         int count = 0;
         boolean[][] visited = new boolean[rows][columns];
         for (int i = 0; i < rows; i++) {
