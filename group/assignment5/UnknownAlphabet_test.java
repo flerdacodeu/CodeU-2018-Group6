@@ -1,10 +1,8 @@
 import static org.junit.Assert.*;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 
 import org.junit.Test;
 
@@ -14,7 +12,8 @@ public class UnknownAlphabet_test {
 	@Test
 	public void testCreateVertices() throws Exception{
 		UnknownAlphabet alphabet = new UnknownAlphabet();
-		LinkedList<Vertex> vertices = alphabet.createVertices(Arrays.asList("ART", "RAT", "CAT", "CAR"));
+		alphabet.createVertices(Arrays.asList("ART", "RAT", "CAT", "CAR"));
+		LinkedList<Vertex> vertices = alphabet.getListOfVertices();
 		
 		assertEquals(vertices.size(), 4);
 		
@@ -55,7 +54,7 @@ public class UnknownAlphabet_test {
 	@Test
 	public void testOneWord() throws Exception {
 		UnknownAlphabet alphabet = new UnknownAlphabet();
-		LinkedHashSet<Character> correctResult = new LinkedHashSet<Character>(Arrays.asList('A', 'B', 'C', 'D', 'E', 'F','G'));
+		LinkedList<Character> correctResult = new LinkedList<Character>(Arrays.asList('A', 'B', 'C', 'D', 'E', 'F','G'));
 		assertEquals(alphabet.getAlphabet(Arrays.asList("ABCDEFG")), correctResult);
 		assertEquals(alphabet.getAlphabet(Arrays.asList("ABACDBEFEGGG")), correctResult);
 	}
@@ -63,35 +62,33 @@ public class UnknownAlphabet_test {
 	@Test
 	public void testSmallExample() throws Exception {
 		UnknownAlphabet alphabet = new UnknownAlphabet();
-		LinkedHashSet<Character> result = alphabet.getAlphabet(Arrays.asList("ART", "RAT", "CAT", "CAR"));
+		LinkedList<Character> result = alphabet.getAlphabet(Arrays.asList("ART", "RAT", "CAT", "CAR"));
 		
 		System.out.println(result.toString()); // [T, A, R, C]
-		
-		List<Object> arrayResult = Arrays.asList(result.toArray());
-		assertTrue(arrayResult.indexOf('A') < arrayResult.indexOf('R'));
-		assertTrue(arrayResult.indexOf('R') < arrayResult.indexOf('C'));
-		assertTrue(arrayResult.indexOf('T') < arrayResult.indexOf('R'));
+
+		assertTrue(result.indexOf('A') < result.indexOf('R'));
+		assertTrue(result.indexOf('R') < result.indexOf('C'));
+		assertTrue(result.indexOf('T') < result.indexOf('R'));
 	}
 	
 	@Test
 	public void testBiggerExample() throws Exception {
 		UnknownAlphabet alphabet = new UnknownAlphabet();
-		LinkedHashSet<Character> result = alphabet.getAlphabet(Arrays.asList("bear","better","calm","clear",
+		LinkedList<Character> result = alphabet.getAlphabet(Arrays.asList("bear","better","calm","clear",
 				"club","cluster", "cute", "ready","rear"));
 		
-		System.out.println(result.toString()); // [y, d, m, a, l, t, e, u, b, s, c, r]
+		System.out.println(result.toString()); // [y, d, m, a, t, l, e, u, b, s, c, r]
 		
-		List<Object> arrayResult = Arrays.asList(result.toArray());
-		assertTrue(arrayResult.indexOf('a') < arrayResult.indexOf('t')); // beAr < beTter
-		assertTrue(arrayResult.indexOf('b') < arrayResult.indexOf('c')); // Better < Calm
-		assertTrue(arrayResult.indexOf('a') < arrayResult.indexOf('l')); // cAlm < cLear
-		assertTrue(arrayResult.indexOf('e') < arrayResult.indexOf('u')); // clEar < clUb
-		assertTrue(arrayResult.indexOf('b') < arrayResult.indexOf('s')); // cluB < cluSter
-		assertTrue(arrayResult.indexOf('l') < arrayResult.indexOf('u')); // cLuster < cUter
-		assertTrue(arrayResult.indexOf('a') < arrayResult.indexOf('u')); // cAlm < ... < cUte
-		assertTrue(arrayResult.indexOf('c') < arrayResult.indexOf('r')); // Cute < Ready
-		assertTrue(arrayResult.indexOf('b') < arrayResult.indexOf('r')); // Better < .. < Ready
-		assertTrue(arrayResult.indexOf('d') < arrayResult.indexOf('r')); // reaDy < reaR
+		assertTrue(result.indexOf('a') < result.indexOf('t')); // beAr < beTter
+		assertTrue(result.indexOf('b') < result.indexOf('c')); // Better < Calm
+		assertTrue(result.indexOf('a') < result.indexOf('l')); // cAlm < cLear
+		assertTrue(result.indexOf('e') < result.indexOf('u')); // clEar < clUb
+		assertTrue(result.indexOf('b') < result.indexOf('s')); // cluB < cluSter
+		assertTrue(result.indexOf('l') < result.indexOf('u')); // cLuster < cUter
+		assertTrue(result.indexOf('a') < result.indexOf('u')); // cAlm < ... < cUte
+		assertTrue(result.indexOf('c') < result.indexOf('r')); // Cute < Ready
+		assertTrue(result.indexOf('b') < result.indexOf('r')); // Better < .. < Ready
+		assertTrue(result.indexOf('d') < result.indexOf('r')); // reaDy < reaR
 	}
 	
 }
