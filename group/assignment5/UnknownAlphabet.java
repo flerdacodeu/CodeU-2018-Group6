@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 // Helper class to represent the characters in the words and their relation.
-// vertex1 is the parent of vertex2 if the char of vertex1 comes before the char of vertex2 in the alphabet.
+// vertex_first is the parent of vertex_second if the char of vertex_first comes before the char of vertex_second in the alphabet.
 // i.e if Abc < Bcd then vertex with char B is the child of vertex with char A.
 // A vertex can be in 3 states for the topological visit:
 // white = not yet visited; grey = visited, but not yet finished; black = finished.
@@ -58,22 +58,24 @@ public class UnknownAlphabet {
 			return new LinkedList<Character>();
 
 		// Return all characters (no duplicates) if dictionary has only one word.
-		if (dict.size() == 1) {
-			String word = dict.get(0);
-			for (int i = 0; i < word.length(); i++) {
-				Character ch = word.charAt(i);
-				if(!alphabet.contains(ch))
-					alphabet.add(ch);
-			}
-			
-			return alphabet;
+		if (dict.size() == 1) 
+			alphabetForOneWord(dict.get(0));
+		
+		else{
+			createVertices(dict);
+			topologicalSort();
 		}
 
-		createVertices(dict);
-		topologicalSort();
-
-		// Return the characters in the correct order after topological sort.
 		return alphabet;
+	}
+	
+	private void alphabetForOneWord(String word){
+		
+		for (int i = 0; i < word.length(); i++) {
+			Character ch = word.charAt(i);
+			if(!alphabet.contains(ch))
+				alphabet.add(ch);
+		}
 	}
 
 	// Traverse verticies which have not been visited yet.
@@ -103,59 +105,70 @@ public class UnknownAlphabet {
 		alphabet.addFirst(cur_vertex.getValue());
 	}
 
-	// Look at every 2 consecutive words to get the relation between the first 2 different characters.
-	// For example, in [ABCD, ABDE, EFGH, FMNO]: C < D (from first 2 words), A < E (from 2nd and 3rd), E < F (from 3rd and 4th)
+	// Look at every 2 consecutive words to get the relation between the word_first 2 different characters.
+	// For example, in [ABCD, ABDE, EFGH, FMNO]: C < D (from word_first 2 words), A < E (from 2nd and 3rd), E < F (from 3rd and 4th)
 	// Because A < E and E < F then from transitivity => A < E without needing to check word 1 or 2 with word 4.
 	public void createVertices(List<String> dict) {
 
-		for (int i = 0; i < dict.size() - 1; i++) {
-			String first = dict.get(i);
-			String second = dict.get(i + 1);
-			createVerticesHelper(first, second);
+		boolean isSecondWordLast = false;
+		int dictSize = dict.size();
+		
+		for (int i = 0; i < dictSize - 1; i++) {
+			String word_first = dict.get(i);
+			String word_second = dict.get(i + 1);
+			
+			if(i == dictSize - 1)
+				isSecondWordLast = true; 
+			
+			createVerticesHelper(word_first, word_second, isSecondWordLast);
 		}
 	}
 
-	private void createVerticesHelper(String first, String second) {
+	private void createVerticesHelper(String word_first, String word_second, boolean isSecondWordLast) {
 
-		int length1 = first.length();
-		int length2 = second.length();
+		int length_first = word_first.length();
+		int length_second = word_second.length();
+		int min_length = Math.min(length_first, length_second);
 
-		int i = 0;
-		int j = 0;
+		int index = 0;
 
-		// Iterate through first and second word until they have a different character.
+		// Iterate through word_first and word_second word until they have a different character.
 		// For each new character, create its vertex and add it to the list using createVertex.
-		while (i < length1 && j < length2) {
-			char char1 = first.charAt(i);
-			char char2 = second.charAt(j);
+		while (index < min_length) {
+			char char_first = word_first.charAt(index);
+			char char_second = word_second.charAt(index);
 
-			if (char1 == char2) {
-				createVertex(char1);
+			if (char_first == char_second) {
+				createVertex(char_first);
 			}
 
 			else {
-				Vertex vertex1 = createVertex(char1);
-				Vertex vertex2 = createVertex(char2);
-				vertex1.addChild(vertex2);
+				Vertex vertex_first = createVertex(char_first);
+				Vertex vertex_second = createVertex(char_second);
+				vertex_first.addChild(vertex_second);
 				break;
 			}
 
-			i++;
-			j++;
+			index++;
 		}
 
-		// Create vertices for characters until the end of first and second words.
-		while (i < length1) {
-			createVertex(first.charAt(i));
-			i++;
+		int index_second = index;
+		
+		// Create vertices for characters until the end of word_first  word.
+		while (index < length_first) {
+			createVertex(word_first.charAt(index));
+			index++;
 		}
 
-		while (j < length2) {
-			createVertex(second.charAt(j));
-			j++;
+		if (isSecondWordLast) {
+			while (index_second < length_second) {
+				createVertex(word_second.charAt(index_second));
+				index_second++;
+			}
 		}
+
 	}
-	
+			
 	// Auxiliary method, keep a map of already created vertices for given chars.
 	// Only create new vertex and update map and list if char not seen before (not in map).
 	private Vertex createVertex(char ch) {
