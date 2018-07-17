@@ -2,14 +2,9 @@ package assignment5;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-/**
- *
- * @author Ana
- */
 public class Graph {
 
     

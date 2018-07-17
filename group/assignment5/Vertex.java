@@ -4,7 +4,7 @@ import java.util.HashSet;
 
 public class Vertex {
 
-    private Character letter;
+    private final Character letter;
     private int depth;
     private String state;
 

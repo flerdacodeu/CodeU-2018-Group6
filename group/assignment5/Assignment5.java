@@ -7,6 +7,12 @@ public class Assignment5 {
 
     private Graph graphOfLetters = new Graph();
 
+    /**
+     * Solution will create a direct acyclic graph out of letters found in the dictionary
+     * by adding an edge between each two letters that have a defined ordering in the alphabet.
+     * The possible alphabets of the dictionary are found by then using a recursive backtracking
+     * modification of the topological sort algorithm.
+     */
     public LinkedList<LinkedList<Character>> findAllAphabetsOfLanguage(List<String> dictionaryList) {
         LinkedList<LinkedList<Character>> allPossibleAlphabets = new LinkedList<>();
 
@@ -93,57 +99,6 @@ public class Assignment5 {
 
     private boolean isSecondWordLastInDictionary(int dictionarySize, int secondWordPosition) {
         return secondWordPosition == (dictionarySize - 1);
-    }
-
-    public static void main(String[] args) {
-        LinkedList<String> dictionary = new LinkedList<>();
-        /* 
-        dictionary.add("ART");
-        dictionary.add("RAT");
-        dictionary.add("CAT");
-        dictionary.add("CAR");
-         */
-
- /* 
-        dictionary.add("54");
-        dictionary.add("50");
-        dictionary.add("24");
-        dictionary.add("21");
-        dictionary.add("35");
-        dictionary.add("30");
-        dictionary.add("15");
-         */
- 
-        //dictionary.add("ACE");
-        //dictionary.add("ALU");
-        dictionary.add("BEAR");
-        dictionary.add("BETTER");    
-        dictionary.add("CALM");
-        dictionary.add("CLEAR");
-        dictionary.add("CLUB");
-        dictionary.add("CLUE");
-        dictionary.add("CLUSTER");
-        dictionary.add("CUTE");
-        dictionary.add("READY");
-        dictionary.add("REAR");
-
-        Assignment5 alphabetCreator = new Assignment5();
-        //alphabetCreator.formTopologicalGraph(dictionary);
-        long millisStart = System.currentTimeMillis();
-        LinkedList<LinkedList<Character>> allPossibleAlphabets = alphabetCreator.findAllAphabetsOfLanguage(dictionary);
-        long millisEnd = System.currentTimeMillis();
-
-        System.out.println("Number of possible alphabets: " + allPossibleAlphabets.size() + "; found in: " + (millisEnd - millisStart) + " milliseconds.");
-        if (allPossibleAlphabets.size() < 100) {
-            for (int i = 0; i < allPossibleAlphabets.size(); i++) {
-                LinkedList<Character> currentPossibleAlphabet = allPossibleAlphabets.get(i);
-                for (int j = 0; j < currentPossibleAlphabet.size(); j++) {
-                    System.out.print(currentPossibleAlphabet.get(j) + " ");
-                }
-                System.out.println("");
-            }
-        }
-
     }
 
 }
