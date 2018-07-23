@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 public class Assignment4 {
+    
+    private final static boolean IS_SEA = true;
 
     private boolean areAdjacent(int tile1, int tile2, int cols) {
         int row1 = tile1 / cols;
@@ -34,12 +36,12 @@ public class Assignment4 {
         return mergedIsland;
     }
 
-    public int findNumOfIslandsInSea(int rows, int columns, boolean[][] sea) {
+    public int findNumOfIslandsInSea(int rows, int columns, boolean[][] map) {
         List<Set<Integer>> islands = new LinkedList<>();
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                if (sea[i][j]) {
+                if (map[i][j] == IS_SEA) {
                     int tile = i * columns + j;
                     List<Set<Integer>> islandsTileBelongsTo = new LinkedList<>();
                     for (Set<Integer> island : islands) {
