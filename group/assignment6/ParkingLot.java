@@ -21,14 +21,16 @@ public class ParkingLot {
     private int[] parkingLotCurrent; //car in each position of the parking lot
     private int[] parkingLotEnd;  // final desired state of the parking lot
     private int[] carToPosition; //current position of each car
+    private List<Integer>[] forbiddenParkingSpaces;
     private int parkingLotSize;
     private List<Move> moves;
 
-    public ParkingLot(int[] parkingLotCurrent, int[] parkingLotEnd) {
+    public ParkingLot(int[] parkingLotCurrent, int[] parkingLotEnd, List[] forbiddenParkingSlots) {
 
         this.parkingLotSize = parkingLotCurrent.length;
         this.parkingLotCurrent = parkingLotCurrent;
         this.parkingLotEnd = parkingLotEnd;
+        this.forbiddenParkingSpaces = forbiddenParkingSlots;
         moves = new ArrayList<>();
     }
 
@@ -63,6 +65,11 @@ public class ParkingLot {
             if (parkedCarId < -1 || parkedCarId > N - 1) {
                 throw new Exception("Car id is represented with invalid number.");
             }
+            
+            // check if car shouldn't be in current parking slot
+            if (forbiddenParkingSpaces != null && carForbiddenToParkInSpace(parkedCarId, forbiddenParkingSpaces[i])) {
+                throw new Exception("Car is parked in a forbidden parking space.");
+            }
 
             // Check only the parking lot has only one free space.
             if (parkedCarId == -1) {
@@ -84,6 +91,15 @@ public class ParkingLot {
             found[parkedCarId + 1] = true;
         }
     }
+    
+    private boolean carForbiddenToParkInSpace(int carId, List<Integer> carsForbiddenToParkInSpace) {
+        for (Integer currentCarId : carsForbiddenToParkInSpace) {
+            if (currentCarId == carId) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // For each car, save its current position.
     private void initCarToPosition() {
@@ -98,19 +114,15 @@ public class ParkingLot {
 
     private void doAllMoves() {
 
-        // If possible, firstly move to the current free space the car that should be there in the end.
-        // this while reduces the number of moves from 12 to 6 for testPermutation
-        // and from 5 to 3 in testSimpleCase.
-        while (currentEmptySpotIndex != endEmptySpotIndex) {
-            int desiredCar = parkingLotEnd[currentEmptySpotIndex];
-            int currentDesiredCarPosition = carToPosition[desiredCar];
-            doOneMove(desiredCar, currentDesiredCarPosition, currentEmptySpotIndex);
-        }
-
-        // Then do the rest of the swaps.
-        // iterate through, swap the car currently occupying space i with the desired end state car
-        // using the emptySpace for swapping when necessary
+        // Iterate through and check whether current and end state match.
+        // While possible, reduce the number of moves by trying to move to the current free space the car that should be there in the end.
+        // When the current free spot matches the end free spot, swap the the car at position i with the car that is supposed to be at that
+        // position by making two moves. This will change the position of the free space again and trigger the while loop in the next iteration
+        // minimizing the number of moves need to rearrage the cars at the parking lot.
         for (int i = 0; i < parkingLotSize; i++) {
+            // If possible, firstly move to the current free space the car that should be there in the end.
+            // this while reduces the number of moves from 12 to 6 for testPermutation
+            // and from 5 to 3 in testSimpleCase.
             while (currentEmptySpotIndex != endEmptySpotIndex) {
                 int desiredCar = parkingLotEnd[currentEmptySpotIndex];
                 int currentDesiredCarPosition = carToPosition[desiredCar];
@@ -120,11 +132,11 @@ public class ParkingLot {
             int currentCar = parkingLotCurrent[i];
             int desiredCar = parkingLotEnd[i];
             if (currentCar != desiredCar) {
-                // don't do anything if space is already empty
+                // move from the space, only if it's not already empty
                 if (currentCar != -1) {
                     doOneMove(currentCar, i, currentEmptySpotIndex);
                 }
-                // don't need to do anything if space should be empty
+                // move to the space, only if it should not be empty
                 if (desiredCar != -1) {
                     int desiredCarPosition = carToPosition[desiredCar];
                     doOneMove(desiredCar, desiredCarPosition, i);
