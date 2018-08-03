@@ -131,4 +131,20 @@ public class ParkingLotTest {
         ParkingLot parkingLot = new ParkingLot(startState, desiredState, constraints);
         parkingLot.rearrangeCars();
     }
+
+    @Test
+    public void testConstraintsWithPossibleLoop() throws Exception {
+        int[] startState = new int[]{0, -1, 1, 4, 2, 3, 5};
+        int[] desiredState = new int[]{2, 4, 3, 1, 5, -1, 0};
+        List<Integer> constraintsSpace5 = new ArrayList<Integer>();
+        constraintsSpace5.add(0);
+        constraintsSpace5.add(2);
+        constraintsSpace5.add(5);
+        List[] forbiddenParkingSlots = new List[startState.length];
+        forbiddenParkingSlots[5] = constraintsSpace5;
+        ParkingLot parkingLot = new ParkingLot(startState, desiredState, forbiddenParkingSlots);
+        parkingLot.rearrangeCars();
+        assertArrayEquals(desiredState, parkingLot.getEndState());
+        assertEquals(0, parkingLot.getMoves().size());
+    }
 }
