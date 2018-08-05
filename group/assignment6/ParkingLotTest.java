@@ -1,6 +1,8 @@
 package assignment6;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import org.junit.Test;
 
@@ -9,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ParkingLotTest {
 
+	// Tests with no constraints.
     @Test
     public void testOneCarInRightPLace_returnNoMoves() throws Exception {
         int[] startState = new int[]{0, -1};
@@ -26,9 +29,9 @@ public class ParkingLotTest {
         ParkingLot parkingLot = new ParkingLot(startState, desiredState, null);
         parkingLot.rearrangeCars();
         assertArrayEquals(desiredState, parkingLot.getEndState());
-        assertEquals(1, parkingLot.getMoves().size());
+		assertEquals(1, parkingLot.getMoves().size());
         
-        System.out.println("Exactly one car in wrong place test => move size: " + parkingLot.getMoves().size());
+        System.out.println("\nExactly one car in wrong place test => move size: " + parkingLot.getMoves().size());
         parkingLot.printMoves();
     }
 
@@ -40,7 +43,7 @@ public class ParkingLotTest {
         parkingLot.rearrangeCars();
         assertArrayEquals(desiredState, parkingLot.getEndState());
      
-        System.out.println("Simple case test => move size: " + parkingLot.getMoves().size());
+        System.out.println("\nSimple case test => move size: " + parkingLot.getMoves().size());
         parkingLot.printMoves();
     }
 
@@ -52,7 +55,7 @@ public class ParkingLotTest {
         parkingLot.rearrangeCars();
         assertArrayEquals(desiredState, parkingLot.getEndState());
 
-        System.out.println("Permutation test => move size: " + parkingLot.getMoves().size());
+        System.out.println("\nPermutation test => move size: " + parkingLot.getMoves().size());
         parkingLot.printMoves();
     }
 
@@ -64,7 +67,7 @@ public class ParkingLotTest {
         parkingLot.rearrangeCars();
         assertArrayEquals(desiredState, parkingLot.getEndState());
         
-        System.out.println("Reverse test => move size: " + parkingLot.getMoves().size());
+        System.out.println("\nReverse test => move size: " + parkingLot.getMoves().size());
         parkingLot.printMoves();
     }
     
@@ -76,7 +79,7 @@ public class ParkingLotTest {
         parkingLot.rearrangeCars();
         assertArrayEquals(desiredState, parkingLot.getEndState());
         
-        System.out.println("Cycles test => move size: " + parkingLot.getMoves().size());
+        System.out.println("\nCycles test => move size: " + parkingLot.getMoves().size());
         parkingLot.printMoves();
     }
 
@@ -104,6 +107,7 @@ public class ParkingLotTest {
         parkingLot.rearrangeCars();
     }
     
+    // Tests with constraints.
     @Test(expected = Exception.class)
     public void givenInvalidStartStateAndConstraints_throwError() throws Exception {
         int[] startState = new int[]{0, 1, 2, -1};
@@ -131,20 +135,104 @@ public class ParkingLotTest {
         ParkingLot parkingLot = new ParkingLot(startState, desiredState, constraints);
         parkingLot.rearrangeCars();
     }
-
+    
+    @Test(expected = Exception.class)
+    public void  noPossibleMove_throwError()  throws Exception {
+		int[] startState = new int[]{0, -1, 1};
+        int[] desiredState = new int[]{1, -1, 0};
+        List<Integer> constraintsSpace1 = Arrays.asList(1,0);
+        List[] forbiddenParkingSlots = new List[startState.length];
+        forbiddenParkingSlots[1] = constraintsSpace1;
+        ParkingLot parkingLot = new ParkingLot(startState, desiredState, forbiddenParkingSlots);
+        parkingLot.rearrangeCars();
+    }
+    
+    @Test
+    public void testOneConstraintSmallList() throws Exception {
+        int[] startState = new int[]{0, -1, 1};
+        int[] desiredState = new int[]{-1, 1, 0};
+        List<Integer> constraintsSpace0 = Arrays.asList(1);
+        List[] forbiddenParkingSlots = new List[startState.length];
+        forbiddenParkingSlots[0] = constraintsSpace0;
+        ParkingLot parkingLot = new ParkingLot(startState, desiredState, forbiddenParkingSlots);
+        parkingLot.rearrangeCars();
+        
+        System.out.println("\nOne small constraint test => move size: " + parkingLot.getMoves().size());
+        parkingLot.printMoves();   
+    }
+    
+    @Test
+    public void testConstraints2() throws Exception {
+		int[] startState = new int[]{0, -1, 1, 2};
+        int[] desiredState = new int[]{1, 2, 0, -1};
+        List<Integer> constraintsSpace3 = Arrays.asList(1,0);
+        List[] forbiddenParkingSlots = new List[startState.length];
+        forbiddenParkingSlots[1] = constraintsSpace3;
+        ParkingLot parkingLot = new ParkingLot(startState, desiredState, forbiddenParkingSlots);
+        parkingLot.rearrangeCars();	        
+        
+        System.out.println("\nConstraints 2 test => move size: " + parkingLot.getMoves().size());
+        parkingLot.printMoves();	 
+    }
+    
+    @Test
+    public void testConstraints3() throws Exception {
+		int[] startState = new int[]{0, -1, 1, 2};
+        int[] desiredState = new int[]{1, 2, 0, -1};
+        List<Integer> constraintsSpace3 = Arrays.asList(1,0);
+        List[] forbiddenParkingSlots = new List[startState.length];
+        forbiddenParkingSlots[3] = constraintsSpace3;
+        ParkingLot parkingLot = new ParkingLot(startState, desiredState, forbiddenParkingSlots);
+        parkingLot.rearrangeCars();
+        List<Move> result = parkingLot.getMoves();
+        
+        System.out.println("\nConstraints 3 test => move size: " + parkingLot.getMoves().size());
+        parkingLot.printMoves();	        	         
+    }
+    
+    @Test
+    public void testConstraintsMedium() throws Exception {
+        int[] startState = new int[]{0, -1, 1, 2, 3};
+        int[] desiredState = new int[]{1, -1, 2, 3, 0};
+        List<Integer> constraintsSpace1 = Arrays.asList(0,2);
+        List[] forbiddenParkingSlots = new List[startState.length];
+        forbiddenParkingSlots[1] = constraintsSpace1;
+        ParkingLot parkingLot = new ParkingLot(startState, desiredState, forbiddenParkingSlots);
+        parkingLot.rearrangeCars();
+        
+        System.out.println("\nConstraints medium test => move size: " + parkingLot.getMoves().size());
+        parkingLot.printMoves();	 
+    }
+   
     @Test
     public void testConstraintsWithPossibleLoop() throws Exception {
         int[] startState = new int[]{0, -1, 1, 4, 2, 3, 5};
         int[] desiredState = new int[]{2, 4, 3, 1, 5, -1, 0};
-        List<Integer> constraintsSpace5 = new ArrayList<Integer>();
-        constraintsSpace5.add(0);
-        constraintsSpace5.add(2);
-        constraintsSpace5.add(5);
+        List<Integer> constraintsSpace5 = Arrays.asList(0,2,5);
         List[] forbiddenParkingSlots = new List[startState.length];
         forbiddenParkingSlots[5] = constraintsSpace5;
         ParkingLot parkingLot = new ParkingLot(startState, desiredState, forbiddenParkingSlots);
         parkingLot.rearrangeCars();
-        assertArrayEquals(desiredState, parkingLot.getEndState());
-        assertEquals(0, parkingLot.getMoves().size());
+        List<Move> result = parkingLot.getMoves();
+        
+        System.out.println("\nConstraints longer with possible loop test => move size: " + parkingLot.getMoves().size());
+        parkingLot.printMoves();	
+    }
+    
+    @Test
+    public void testConstraintsInMoreSpaces() throws Exception {
+        int[] startState = new int[]{0, -1, 1, 4, 2, 3, 5};
+        int[] desiredState = new int[]{2, 4, 3, 1, 5, -1, 0};
+        List<Integer> constraintsSpace5 = Arrays.asList(0,2,5);
+        List<Integer> constraintsSpace3 = Arrays.asList(2);
+        List[] forbiddenParkingSlots = new List[startState.length];
+        forbiddenParkingSlots[3] = constraintsSpace3;
+        forbiddenParkingSlots[5] = constraintsSpace5;
+        ParkingLot parkingLot = new ParkingLot(startState, desiredState, forbiddenParkingSlots);
+        parkingLot.rearrangeCars();
+        List<Move> result = parkingLot.getMoves();
+        
+        System.out.println("\nConstraints in more spaces test => move size: " + parkingLot.getMoves().size());
+        parkingLot.printMoves();	
     }
 }

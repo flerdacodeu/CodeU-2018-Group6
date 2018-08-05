@@ -1,6 +1,9 @@
 package assignment6;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -21,9 +24,10 @@ public class ParkingLot {
     private int[] parkingLotCurrent; //car in each position of the parking lot
     private int[] parkingLotEnd;  // final desired state of the parking lot
     private int[] carToPosition; //current position of each car
-    private List<Integer>[] forbiddenParkingSpaces;
+    private List[] forbiddenParkingSpaces; // list of which cars are forbbiden in each spot.
     private int parkingLotSize;
-    private List<Move> moves;
+    private List<Move> movesNoConstraints;
+    private LinkedList<LinkedList<Move>> movesConstraints;
 
     public ParkingLot(int[] parkingLotCurrent, int[] parkingLotEnd, List[] forbiddenParkingSlots) {
 
@@ -31,7 +35,7 @@ public class ParkingLot {
         this.parkingLotCurrent = parkingLotCurrent;
         this.parkingLotEnd = parkingLotEnd;
         this.forbiddenParkingSpaces = forbiddenParkingSlots;
-        moves = new ArrayList<>();
+        movesNoConstraints = new ArrayList<>();
     }
 
     public void rearrangeCars() throws Exception {
@@ -39,7 +43,29 @@ public class ParkingLot {
         checkValidInputAndInitFreeSpaces();
 
         initCarToPosition();
-        doAllMoves();
+        
+        if(forbiddenParkingSpaces != null) {
+        	// Initialiase auxiliary variables for the recursive method to compute moves with constraints.
+        	this.movesConstraints = new LinkedList<LinkedList<Move>>();
+            HashMap<Integer, Integer> initialStateMap = new HashMap<>();
+        	for(int i = 0; i < parkingLotSize; i++) {
+        	  	initialStateMap.put(i, parkingLotCurrent[i]);
+        	}
+        	
+        	HashSet<HashMap<Integer, Integer>> allCurrentSeenStates = new HashSet<HashMap<Integer, Integer>>();
+        	allCurrentSeenStates.add(initialStateMap);	
+        	
+        	doAllMovesWithConstraints(initialStateMap, currentEmptySpotIndex, new LinkedList<Move>(), allCurrentSeenStates);
+        	// No possible sequence of moves has been found.
+        	if(movesConstraints.size() == 0) {
+    			throw new Exception("Out of options, constraints make the moves impossible.");
+    		}
+        }
+       
+        // No constraints
+        else {
+        	doAllMovesNoConstraints();
+        }
     }
 
     private void checkValidInputAndInitFreeSpaces() throws Exception {
@@ -65,9 +91,9 @@ public class ParkingLot {
             if (parkedCarId < -1 || parkedCarId > N - 1) {
                 throw new Exception("Car id is represented with invalid number.");
             }
-            
+
             // check if car shouldn't be in current parking slot
-            if (forbiddenParkingSpaces != null && carForbiddenToParkInSpace(parkedCarId, forbiddenParkingSpaces[i])) {
+            if (forbiddenParkingSpaces != null && forbiddenParkingSpaces[i] != null && carForbiddenToParkInSpace(parkedCarId, forbiddenParkingSpaces[i])) {
                 throw new Exception("Car is parked in a forbidden parking space.");
             }
 
@@ -91,8 +117,11 @@ public class ParkingLot {
             found[parkedCarId + 1] = true;
         }
     }
-    
+
+    // See if car appears in the forbbiden list for the current spot checked.
     private boolean carForbiddenToParkInSpace(int carId, List<Integer> carsForbiddenToParkInSpace) {
+    	if(carsForbiddenToParkInSpace == null)
+    		return true;
         for (Integer currentCarId : carsForbiddenToParkInSpace) {
             if (currentCarId == carId) {
                 return true;
@@ -112,7 +141,7 @@ public class ParkingLot {
         }
     }
 
-    private void doAllMoves() {
+    private void doAllMovesNoConstraints() {
 
         // Iterate through and check whether current and end state match.
         // While possible, reduce the number of moves by trying to move to the current free space the car that should be there in the end.
@@ -146,24 +175,102 @@ public class ParkingLot {
     }
 
     private void doOneMove(int carId, int fromSpace, int toSpace) {
-        moves.add(new Move(carId, fromSpace, toSpace));
         parkingLotCurrent[toSpace] = carId;
         parkingLotCurrent[fromSpace] = -1;
         currentEmptySpotIndex = fromSpace;
         carToPosition[carId] = toSpace;
-    }
+        
+        movesNoConstraints.add(new Move(carId, fromSpace, toSpace, parkingLotCurrent));
+     }
+    
+    // Iterate through the space, move each car (not in right position) to free space and start again until we reach the final state.
+    // Only do moves that are possible.
+    private void doAllMovesWithConstraints(HashMap<Integer, Integer> currentState, int currentFreeSpace, LinkedList<Move> currentMovesInThisSequence, HashSet<HashMap<Integer, Integer>> allSeenStatesInThisSequence){
+    	if(isStateFinal(currentState)){
+    		// We found a possible solution.
+    		movesConstraints.add(currentMovesInThisSequence);
+    		return;
+    	}
+    	
+    	// One solution already found, no need to search for more.
+    	if(movesConstraints.size() != 1) {
+    		for(int i = 0; i < parkingLotSize; i++){    		
+        		if(i != currentFreeSpace){		
+         			int car = currentState.get(i);
+         			// Don't move cars already in correct position.
+         			if (car != parkingLotEnd[i]) {
+         		    	// Move every other car to free space.
+         				int tmpFreeSpace = currentFreeSpace;
+            			int to = tmpFreeSpace;          			
+            			// If move is valid, check the state was not seen before and continue moving cars.
+            			if(isValidMove(car, to)) {
+            				// Copy the current state and do the move.
+                			HashMap<Integer, Integer> resultingState = new HashMap<>();
+                			resultingState.putAll(currentState);
+                			
+                			resultingState.replace(tmpFreeSpace, car);
+                			resultingState.replace(i, -1);
+                			tmpFreeSpace = i;
 
-    public void printMoves() {
-        for (Move move : moves) {
-            System.out.println(move.toString());
+                			// Check this move does not lead to an already seen state for this current sequence
+                			if(!allSeenStatesInThisSequence.contains(resultingState)){
+                				
+                				Move move = new Move(car, i, to, resultingState);        	
+                				
+                				// Copy the current list of moves and add the new move.
+                				LinkedList<Move> resultingCurrentMovesSequence = new LinkedList<>();
+                				resultingCurrentMovesSequence.addAll(currentMovesInThisSequence);			
+                				resultingCurrentMovesSequence.add(move);
+                				      
+                				// Copy the current list of seen states and add the new state.
+                				HashSet<HashMap<Integer, Integer>> resultingSeenStates = new HashSet<HashMap<Integer, Integer>>();
+                				resultingSeenStates.addAll(allSeenStatesInThisSequence);
+                				resultingSeenStates.add(resultingState);
+                					 				
+                				// Generates next moves from this new state.
+                				doAllMovesWithConstraints(resultingState, tmpFreeSpace, resultingCurrentMovesSequence, resultingSeenStates);                  				   				
+                			}    			
+            			}        			
+        			}  
+        		}
+    		}
+    	}
+    }
+    
+    private boolean isValidMove(int car, int to) {
+    	if(forbiddenParkingSpaces[to] == null)
+    		return true;
+    	return !forbiddenParkingSpaces[to].contains(car);
+    }
+    
+    private boolean isStateFinal(HashMap<Integer, Integer> parkingLotState){
+    	for(int i = 0; i < parkingLotSize; i++)
+    		if(parkingLotEnd[i] != parkingLotState.get(i))
+    			return false;
+    	return true;
+    }
+   
+    public void printMoves() throws Exception {
+    	List<Move> finalMoves = getMoves();
+        for (Move move : finalMoves) {
+            System.out.println(move);
         }
     }
 
-    public List<Move> getMoves() {
-        return moves;
+    public List<Move> getMoves() throws Exception {
+    	if(forbiddenParkingSpaces != null)
+    		if(movesConstraints.size() == 0) {
+    			throw new Exception("Out of options, constraints make the moves impossible.");
+    		}
+    		else {
+    			return movesConstraints.get(0);
+    		}    		
+        return movesNoConstraints;
     }
 
     public int[] getEndState() {
-        return parkingLotCurrent;
+    	if(forbiddenParkingSpaces == null)
+    		return parkingLotCurrent;
+    	return parkingLotEnd;
     }
 }
