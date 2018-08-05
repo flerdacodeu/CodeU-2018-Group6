@@ -1,8 +1,7 @@
-
 package assignment6;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -10,7 +9,7 @@ import java.util.List;
  * write an algorithm to rearrange the cars in a given way. Only one car can be
  * moved at a time to the empty slot.
  */
-public class ParkingLot {
+public class ParkingLotChallenge3 {
 
     /**
      * We have assumed cars have ids from 0 to N-2 and parking lots have ids
@@ -23,18 +22,19 @@ public class ParkingLot {
     private int[] parkingLotCurrent; //car in each position of the parking lot
     private int[] parkingLotEnd;  // final desired state of the parking lot
     private int[] carToPosition; //current position of each car
-    private List<Integer>[] forbiddenParkingSpaces;
+    private List[] forbiddenParkingSpaces;
     private int parkingLotSize;
     private List<Move> moves;
     private List<int[]> previousStates; // all states we have been in, so that we do not repeat them
 
-    public ParkingLot(int[] parkingLotCurrent, int[] parkingLotEnd, List[] forbiddenParkingSlots) {
+    public ParkingLotChallenge3(int[] parkingLotCurrent, int[] parkingLotEnd, List[] forbiddenParkingSlots) {
 
         this.parkingLotSize = parkingLotCurrent.length;
         this.parkingLotCurrent = parkingLotCurrent;
         this.parkingLotEnd = parkingLotEnd;
         this.forbiddenParkingSpaces = forbiddenParkingSlots;
         moves = new ArrayList<>();
+        previousStates = new ArrayList<>();
     }
 
     public void rearrangeCars() throws Exception {
@@ -42,7 +42,10 @@ public class ParkingLot {
         checkValidInputAndInitFreeSpaces();
 
         initCarToPosition();
-        doAllMoves();
+        if(forbiddenParkingSpaces != null)
+        	doAllMovesWithConstraints();
+        else
+        	doAllMoves();
     }
 
     private void checkValidInputAndInitFreeSpaces() throws Exception {
@@ -70,7 +73,7 @@ public class ParkingLot {
             }
 
             // check if car shouldn't be in current parking slot
-            if (forbiddenParkingSpaces != null && carForbiddenToParkInSpace(parkedCarId, forbiddenParkingSpaces[i])) {
+            if (forbiddenParkingSpaces != null && forbiddenParkingSpaces[i] != null && carForbiddenToParkInSpace(parkedCarId, forbiddenParkingSpaces[i])) {
                 throw new Exception("Car is parked in a forbidden parking space.");
             }
 
@@ -96,6 +99,8 @@ public class ParkingLot {
     }
 
     private boolean carForbiddenToParkInSpace(int carId, List<Integer> carsForbiddenToParkInSpace) {
+    	if(carsForbiddenToParkInSpace == null)
+    		return true;
         for (Integer currentCarId : carsForbiddenToParkInSpace) {
             if (currentCarId == carId) {
                 return true;
@@ -140,9 +145,9 @@ public class ParkingLot {
             }
         }
         boolean done = false;
-        while (!done) {
+        while (!done && !isStateFinal(parkingLotCurrent)) {
             List<Integer> nextLoopWaitingSpaces = new ArrayList<>();
-            while (!waitingSpaces.isEmpty()) {
+            while (!waitingSpaces.isEmpty() && !isStateFinal(parkingLotCurrent)) {
 
                 while (currentEmptySpotIndex != endEmptySpotIndex) {
                     int desiredCar = parkingLotEnd[currentEmptySpotIndex];
@@ -151,44 +156,48 @@ public class ParkingLot {
                     waitingSpaces.remove(new Integer(currentDesiredCarPosition)); //remove specific object
                 }
 
-                int i = waitingSpaces.remove(0); //remove element at index 0
-                int currentCar = parkingLotCurrent[i];
-                int desiredCar = parkingLotEnd[i];
-                if (!carForbiddenToParkInSpace(currentCar, forbiddenParkingSpaces[currentEmptySpotIndex])) {
-                    // move from the space, only if it's not already empty
-                    if (currentCar != -1) {
-                        doOneMove(currentCar, i, currentEmptySpotIndex);
+                if (!isStateFinal(parkingLotCurrent)) {
+                    int i = waitingSpaces.remove(0); //remove element at index 0
+                    int currentCar = parkingLotCurrent[i];
+                    int desiredCar = parkingLotEnd[i];
+
+                    if (!carForbiddenToParkInSpace(currentCar, forbiddenParkingSpaces[currentEmptySpotIndex])) {                    
+                        if (currentCar != -1) {
+                            doOneMove(currentCar, i, currentEmptySpotIndex);
+                        }
+                        if (desiredCar != -1) {
+                            int desiredCarPosition = carToPosition[desiredCar];
+                            doOneMove(desiredCar, desiredCarPosition, i);
+                        }
+                    } else {
+                        nextLoopWaitingSpaces.add(i);
                     }
-                    // move to the space, only if it should not be empty
-                    if (desiredCar != -1) {
-                        int desiredCarPosition = carToPosition[desiredCar];
-                        doOneMove(desiredCar, desiredCarPosition, i);
-                    }
-                } else {
-                    nextLoopWaitingSpaces.add(i);
                 }
+                
             }
-            if (nextLoopWaitingSpaces.size() != 0) {
+            if (nextLoopWaitingSpaces.size() != 0 && !isStateFinal(parkingLotCurrent)) {
                 //find one element already in place, and move it
                 int movingCar = -1;
                 for (int i = 0; i < parkingLotSize; i++) {
                     if (parkingLotCurrent[i] == parkingLotEnd[i] && !carForbiddenToParkInSpace(i, forbiddenParkingSpaces[currentEmptySpotIndex])) {
                         movingCar = i;
                         int[] testingState = parkingLotCurrent;
-                        int prevSpot = carToPosition[movingCar];
-                        testingState[currentEmptySpotIndex] = movingCar;
-                        testingState[prevSpot] = -1;
-                        if (!checkIfStateIsAlreadySeen(testingState)) {
-                            doOneMove(movingCar, prevSpot, currentEmptySpotIndex);
-                            nextLoopWaitingSpaces.add(prevSpot); //it no longer contains its end car
-                        } else {
-                            continue;
-                        }
-                        break;
+                        if(movingCar != parkingLotSize-1) {
+                        	int prevSpot = carToPosition[movingCar];
+                            testingState[currentEmptySpotIndex] = movingCar;
+                            testingState[prevSpot] = -1;
+                            if (!checkIfStateIsAlreadySeen(testingState)) {
+                                doOneMove(movingCar, prevSpot, currentEmptySpotIndex);
+                                nextLoopWaitingSpaces.add(prevSpot); //it no longer contains its end car
+                            } else {
+                                continue;
+                            }
+                            break;
+                        }                       
                     }
                 }
                 if (movingCar == -1) {
-                    throw new Exception("Out of options, constraints make the moves unpossible.");
+                    throw new Exception("Out of options, constraints make the moves impossible.");
                 }
 
                 //test the new state
@@ -198,6 +207,13 @@ public class ParkingLot {
             }
         }
 
+    }
+    
+    private boolean isStateFinal(int[] parkingLotState){
+    	for(int i = 0; i < parkingLotSize; i++)
+    		if(parkingLotEnd[i] != parkingLotState[i])
+    			return false;
+    	return true;
     }
 
     private void doAllMoves() {
@@ -242,6 +258,7 @@ public class ParkingLot {
 
         //add the new state to the previous states
         previousStates.add(parkingLotCurrent);
+        System.out.println(new Move(carId, fromSpace, toSpace, parkingLotCurrent));
     }
 
     public void printMoves() {
